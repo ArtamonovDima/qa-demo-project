@@ -1,0 +1,3 @@
+rootProject.name = 'qa-demo-project'
+include 'user-service'
+
