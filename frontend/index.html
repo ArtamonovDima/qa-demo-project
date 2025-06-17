@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo App</title>
+</head>
+<body>
+<h1>Demo App</h1>
+
+<div id="login-form">
+    <input type="text" id="username" placeholder="Username" value="admin">
+    <input type="password" id="password" placeholder="Password" value="admin123">
+    <button onclick="login()">Login</button>
+</div>
+
+<div id="app" style="display:none;">
+    <p>Welcome, <span id="current-user"></span>!</p>
+    <button onclick="logout()">Logout</button>
+    <h2>User List</h2>
+    <ul id="user-list"></ul>
+</div>
+
+<pre id="result" style="color: red;"></pre>
+
+<script>
+    async function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const res = await fetch("http://localhost:8082/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+
+        if (!res.ok) {
+          document.getElementById("result").innerText = "Login failed!";
+          return;
+        }
+
+        const data = await res.json();
+        const token = data.token;
+        localStorage.setItem("jwtToken", token);
+
+        const usernameFromToken = extractUsernameFromToken(token);
+        document.getElementById("current-user").innerText = usernameFromToken;
+
+        document.getElementById("login-form").style.display = "none";
+        document.getElementById("app").style.display = "block";
+        document.getElementById("result").innerText = "";
+
+        await fetchUsers(token);
+      } catch (e) {
+        document.getElementById("result").innerText = "Error: " + e.message;
+      }
+    }
+
+    async function fetchUsers(token) {
+      try {
+        const res = await fetch("http://localhost:8081/users", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (!res.ok) throw new Error("Unauthorized");
+
+        const users = await res.json();
+        const userList = document.getElementById("user-list");
+        userList.innerHTML = "";
+
+        users.forEach(user => {
+          const li = document.createElement("li");
+          li.textContent = user.name || user.username || user.email || JSON.stringify(user);
+          userList.appendChild(li);
+        });
+
+      } catch (err) {
+        logout();
+        alert("Session expired. Please log in again.");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("jwtToken");
+      document.getElementById("app").style.display = "none";
+      document.getElementById("login-form").style.display = "block";
+      document.getElementById("user-list").innerHTML = "";
+      document.getElementById("current-user").innerText = "";
+    }
+
+    function extractUsernameFromToken(token) {
+      try {
+        const payloadBase64 = token.split('.')[1];
+        const payloadJson = atob(payloadBase64);
+        const payload = JSON.parse(payloadJson);
+        return payload.sub || "User";
+      } catch (e) {
+        return "User";
+      }
+    }
+
+    window.onload = async () => {
+      const token = localStorage.getItem("jwtToken");
+      if (token) {
+        const usernameFromToken = extractUsernameFromToken(token);
+        document.getElementById("current-user").innerText = usernameFromToken;
+        document.getElementById("login-form").style.display = "none";
+        document.getElementById("app").style.display = "block";
+        await fetchUsers(token);
+      }
+    };
+</script>
+</body>
+</html>
