@@ -1,0 +1,49 @@
+buildscript {
+    ext {
+        junitVersion = '5.12.2'
+        allureVersion = '2.29.1'
+        selenideVersion = '7.9.0'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'io.qameta.allure' version '2.12.0'
+    id 'io.qameta.allure-adapter' version '2.12.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'com.codeborne:selenide:7.9.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    testImplementation "io.qameta.allure:allure-attachments:${allureVersion}"
+    testImplementation("io.qameta.allure:allure-junit5:${allureVersion}") {
+        exclude group: "org.junit.jupiter"
+    }
+    testImplementation("io.qameta.allure:allure-selenide:${allureVersion}") {
+        exclude group: 'com.codeborne'
+    }
+    testImplementation "io.qameta.allure:allure-okhttp3:${allureVersion}"
+    testImplementation "io.qameta.allure:allure-grpc:${allureVersion}"
+}
+
+test {
+    useJUnitPlatform()
+//    systemProperty 'selenoid.url', System.getenv('SELENOID_URL') ?: 'http://localhost:4444/wd/hub'
+//    finalizedBy 'allureReport'
+}
+
+allure {
+    version.set("${allureVersion}")
+    adapter {
+        aspectjVersion.set("1.9.22")
+        aspectjWeaver.set(true)
+    }
+}
+
+//task allureReport(type: Exec) {
+//    commandLine 'allure', 'generate', 'build/allure-results', '-o', 'build/allure-report', '--clean'
+//}

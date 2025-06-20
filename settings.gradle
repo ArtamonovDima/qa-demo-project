@@ -1,4 +1,6 @@
 rootProject.name = 'qa-demo-project'
 include 'user-service'
 include 'user-auth-service'
+include 'user-tests'
+
 
