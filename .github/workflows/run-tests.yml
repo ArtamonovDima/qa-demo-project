@@ -25,6 +25,9 @@ jobs:
       - name: Assemble Gradle JARs without tests
         run: ./gradlew :user-service:assemble :user-auth-service:assemble -x test
 
+      - name: Pull required Selenoid image
+        run: docker pull selenoid/vnc:chrome_125.0
+
       - name: Run Docker Compose stack with timeout
         run: |
           timeout 15m docker compose -f docker-compose.yml up --build --abort-on-container-exit
