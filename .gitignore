@@ -37,3 +37,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# Игнорируем Allure результат при локальных и Docker запусках
+allure-docker-results/

@@ -48,7 +48,11 @@ public class SecurityConfig {
 
     private UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:8080")); // подставь свой фронт
+        config.setAllowedOrigins(List.of(
+                "http://localhost:8080",
+                "http://demo_frontend:80",
+                "http://demo_frontend"
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
