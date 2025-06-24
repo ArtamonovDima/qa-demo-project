@@ -19,9 +19,15 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
           docker compose version
 
-      - name: Run Docker Compose stack
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Build Gradle JARs
+        run: ./gradlew :user-service:build :user-auth-service:build
+
+      - name: Run Docker Compose stack with timeout
         run: |
-          docker compose -f docker-compose.yml up --build --abort-on-container-exit
+          timeout 15m docker compose -f docker-compose.yml up --build --abort-on-container-exit
 
       - name: Show Allure container logs (optional)
         if: always()
