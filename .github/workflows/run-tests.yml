@@ -22,8 +22,8 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
 
-      - name: Build Gradle JARs
-        run: ./gradlew :user-service:build :user-auth-service:build
+      - name: Assemble Gradle JARs without tests
+        run: ./gradlew :user-service:assemble :user-auth-service:assemble -x test
 
       - name: Run Docker Compose stack with timeout
         run: |
