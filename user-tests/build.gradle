@@ -32,6 +32,7 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    systemProperty 'allure.results.directory', "$buildDir/allure-results"
 //    systemProperty 'selenoid.url', System.getenv('SELENOID_URL') ?: 'http://localhost:4444/wd/hub'
 //    finalizedBy 'allureReport'
 }

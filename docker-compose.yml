@@ -17,7 +17,7 @@ services:
 
   user-service:
     build: ../qa-demo-project/user-service
-    container_name: demo_user_service
+    container_name: user
     ports:
       - "8081:8080"
     depends_on:
@@ -27,7 +27,7 @@ services:
 
   user-auth-service:
     build: ../qa-demo-project/user-auth-service
-    container_name: demo_auth_service
+    container_name: auth
     ports:
       - "8082:8080"
     depends_on:
@@ -48,7 +48,7 @@ services:
   selenoid:
     container_name: selenoid
     image: aerokube/selenoid:1.11.3
-#    platform: linux/${ARCH}
+#    platform: linux/amd64
     volumes:
       - ./selenoid:/etc/selenoid
       - /var/run/docker.sock:/var/run/docker.sock
@@ -83,15 +83,15 @@ services:
       - frontend
       - selenoid
     volumes:
-      - ../qa-demo-project/user-tests/build/allure-results:/app/build/allure-results
-    environment:
-      - SELENOID_URL=http://selenoid:4444/wd/hub
+      - ./allure-docker-results:/qa-demo-project/user-tests/build/allure-results
+#    environment:
+#      - SELENOID_URL=http://selenoid:4444/wd/hub
     networks:
       - demo_net
 
   allure-service:
     image: frankescobar/allure-docker-service
-    container_name: demo_allure_service
+    container_name: demo-allure-service
     depends_on:
       - ui-tests
     environment:
@@ -100,7 +100,7 @@ services:
     ports:
       - "5050:5050"
     volumes:
-      - ../qa-demo-project/user-tests/build/allure-results:/app/allure-results
+      - ./allure-docker-results:/app/allure-results
     networks:
       - demo_net
 
