@@ -38,6 +38,11 @@ public class LoginTests {
         $("#username").setValue("admin");
         $("#password").setValue("admin123");
         $("button").click();
+        try {
+            Thread.sleep(20000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         $x("//div[@id = 'app']/h2").shouldHave(text("User List"));
     }
 }
